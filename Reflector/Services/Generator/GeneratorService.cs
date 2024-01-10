@@ -5,10 +5,12 @@ namespace Reflector.Services.Generator
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using NJsonSchema.Generation;
     using NSwag.Generation.WebApi;
-    using Reflector.Services.Reflection;
+    using IReflectionService = Reflector.Services.Reflection.IReflectionService;
 
     /// <summary>
     /// Service for generating specifications.
@@ -31,7 +33,13 @@ namespace Reflector.Services.Generator
             List<string> assemblyPaths,
             List<string> controllerNames,
             string defaultUrlTemplate,
-            bool addMissingPathParameters = false)
+            bool addMissingPathParameters = false,
+            ReferenceTypeNullHandling defaultResponseReferenceTypeNullHandling = ReferenceTypeNullHandling.Null,
+            bool generateOriginalParameterNames = true,
+            string title = "",
+            string description = "",
+            string version = "1.0.0",
+            string documentTemplate = "")
         {
             var controllers = Enumerable.Empty<Type>();
             foreach (var assemblyPath in assemblyPaths)
@@ -46,9 +54,20 @@ namespace Reflector.Services.Generator
 
             var settings = new WebApiOpenApiDocumentGeneratorSettings
             {
-                DefaultUrlTemplate = defaultUrlTemplate ?? "api/{controller}/{id}",
                 AddMissingPathParameters = addMissingPathParameters,
+                DefaultResponseReferenceTypeNullHandling = defaultResponseReferenceTypeNullHandling,
+                DefaultUrlTemplate = defaultUrlTemplate ?? "api/{controller}/{id}",
+                Description = description,
+                GenerateOriginalParameterNames = generateOriginalParameterNames,
+                Title = title,
+                Version = version,
             };
+
+            if (!string.IsNullOrWhiteSpace(documentTemplate))
+            {
+                settings.DocumentTemplate = documentTemplate;
+            }
+
             var generator = new WebApiOpenApiDocumentGenerator(settings);
             var document = await generator.GenerateForControllersAsync(controllers);
             return document.ToJson();
