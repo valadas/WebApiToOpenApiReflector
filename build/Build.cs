@@ -181,7 +181,7 @@ class Build : NukeBuild
 
             artifactsDirectory.ZipTo(artifactsDirectory / "release.zip");
             var file = artifactsDirectory / "release.zip";
-            var artifact = File.OpenRead(artifactsDirectory);
+            var artifact = File.OpenRead(file);
             var artifactInfo = new FileInfo(file);
             var assetUpload = new ReleaseAssetUpload()
             {
