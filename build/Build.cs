@@ -178,9 +178,10 @@ class Build : NukeBuild
                 newRelease);
             Serilog.Log.Information($"{release.Name} released !");
 
-            var artifactFile = RootDirectory.GlobFiles("artifacts/**/*.zip").FirstOrDefault();
-            var artifact = File.OpenRead(artifactFile);
-            var artifactInfo = new FileInfo(artifactFile);
+            artifactsDirectory.ZipTo(artifactsDirectory / "release.zip");
+            var file = artifactsDirectory / "release.zip";
+            var artifact = File.OpenRead(artifactsDirectory);
+            var artifactInfo = new FileInfo(file);
             var assetUpload = new ReleaseAssetUpload()
             {
                 FileName = artifactInfo.Name,
