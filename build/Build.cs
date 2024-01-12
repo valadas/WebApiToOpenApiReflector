@@ -246,11 +246,6 @@ class Build : NukeBuild
                 }
             }
 
-            // Checksums
-            releaseNotesBuilder
-                .AppendLine()
-                .Append(File.ReadAllText(artifactsDirectory / "checksums.md"));
-
             releaseNotes = releaseNotesBuilder.ToString();
             Serilog.Log.Information(releaseNotes);
             return releaseNotes;
