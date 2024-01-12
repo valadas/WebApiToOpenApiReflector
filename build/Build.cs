@@ -206,7 +206,8 @@ class Build : NukeBuild
             var package = nugetDirectory.GlobFiles("*.nupkg").First();
             NuGetPush(s => s
                 .SetApiKey(NugetApiKey)
-                .SetSource(package)
+                .SetTargetPath(package)
+                .SetSource("https://api.nuget.org/v3/index.json")
             );
         });
 
