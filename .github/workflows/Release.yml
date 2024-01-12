@@ -40,10 +40,11 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: ReleaseToGithub'
-        run: ./build.cmd ReleaseToGithub
+      - name: 'Run: ReleaseToGithub, ReleaseToNuget'
+        run: ./build.cmd ReleaseToGithub ReleaseToNuget
         env:
           GitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          NugetApiKey: ${{ secrets.NUGET_API_KEY }}
       - name: 'Publish: artifacts'
         uses: actions/upload-artifact@v3
         with:

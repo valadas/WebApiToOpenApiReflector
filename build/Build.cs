@@ -14,6 +14,7 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.NuGet;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.GitHub;
 using Nuke.Common.Tools.GitVersion;
@@ -24,6 +25,7 @@ using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.NuGet.NuGetTasks;
 using static Nuke.Common.Tools.Git.GitTasks;
 
 [GitHubActions(
@@ -40,8 +42,8 @@ using static Nuke.Common.Tools.Git.GitTasks;
     "Release",
     GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[] {"main", "release/*"},
-    InvokedTargets = new[] {nameof(ReleaseToGithub)},
-    ImportSecrets = new[] {nameof(GitHubToken)},
+    InvokedTargets = new[] {nameof(ReleaseToGithub), nameof(ReleaseToNuget) },
+    ImportSecrets = new[] {nameof(GitHubToken), nameof(NugetApiKey)},
     FetchDepth = 0,
     JobConcurrencyCancelInProgress = true,
     PublishArtifacts = true
@@ -61,6 +63,9 @@ class Build : NukeBuild
 
     [Parameter("GitHub Token")]
     readonly string GitHubToken;
+
+    [Parameter("Nuget API Key")]
+    readonly string NugetApiKey;
 
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
@@ -191,6 +196,18 @@ class Build : NukeBuild
             };
             var asset = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, assetUpload);
             Serilog.Log.Information($"Asset {asset.Name} published at {asset.BrowserDownloadUrl}");
+        });
+
+    Target ReleaseToNuget => _ => _
+        .Requires(() => NugetApiKey)
+        .DependsOn(CreateNugetPackage)
+        .Executes(() =>
+        {
+            var package = nugetDirectory.GlobFiles("*.nupkg").First();
+            NuGetPush(s => s
+                .SetApiKey(NugetApiKey)
+                .SetSource(package)
+            );
         });
 
     private string GeneratedReleaseNotes()
