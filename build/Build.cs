@@ -172,6 +172,7 @@ class Build : NukeBuild
                 TargetCommitish = GitVersion.Sha,
                 Prerelease = GitRepository.IsOnReleaseBranch(),
             };
+            GitHubTasks.GitHubClient.Credentials = new Credentials(GitHubToken.NotNull());
             var release = await GitHubTasks.GitHubClient.Repository.Release.Create(
                 GitRepository.GetGitHubOwner(),
                 GitRepository.GetGitHubName(),
@@ -188,7 +189,7 @@ class Build : NukeBuild
                 ContentType = "application/zip",
                 RawData = artifact
             };
-            var asset = GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, assetUpload).Result;
+            var asset = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, assetUpload);
             Serilog.Log.Information($"Asset {asset.Name} published at {asset.BrowserDownloadUrl}");
         });
 
