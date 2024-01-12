@@ -51,6 +51,10 @@
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
         },
+        "NugetApiKey": {
+          "type": "string",
+          "description": "Nuget API Key"
+        },
         "Partition": {
           "type": "string",
           "description": "Partition to use on CI"
@@ -80,6 +84,7 @@
               "Compile",
               "CreateNugetPackage",
               "ReleaseToGithub",
+              "ReleaseToNuget",
               "Restore",
               "TagRelease"
             ]
@@ -99,6 +104,7 @@
               "Compile",
               "CreateNugetPackage",
               "ReleaseToGithub",
+              "ReleaseToNuget",
               "Restore",
               "TagRelease"
             ]
