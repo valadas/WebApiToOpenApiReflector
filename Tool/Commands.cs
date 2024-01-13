@@ -41,6 +41,7 @@ namespace Tool
         /// <param name="description">Specifies the description of the Swagger specification.</param>
         /// <param name="infoVersion">Specifies the version of the Swagger specification (default: 1.0.0).</param>
         /// <param name="documentTemplate">Specifies the Swagger document template (may be a path or JSON, default: none).</param>
+        /// <param name="output">The path to the file to write the specifications to.</param>
         /// <returns>An awaitable task.</returns>
         [PrimaryCommand]
         [Command(Description = "Generates a Swagger/OpenAPI specification for a controller or controllers contained in a .NET Web API assembly.")]
@@ -54,7 +55,8 @@ namespace Tool
             [Option('t', Description = "Specifies the title of the Swagger specification, ignored when the document template is provided.")] string title = "",
             [Option('d', Description = "Specifies the description of the Swagger specification, ignored when the document template is provided.")] string description = "",
             [Option('v', Description = "Specifies the version of the Swagger specification (default: 1.0.0).")]string infoVersion = "1.0.0",
-            [Option(Description = "Specifies the Swagger document template (may be a path or JSON, default: none).")] string documentTemplate = "")
+            [Option(Description = "Specifies the Swagger document template (may be a path or JSON, default: none).")] string documentTemplate = "",
+            [Option('o', Description = "The path to the file to write the specifications to.")] string output = "swagger.json")
         {
             this.logger.LogInformation("Generating...");
             var json = await this.generatorService.GenerateOpenApiAsync(
@@ -68,7 +70,9 @@ namespace Tool
                 description,
                 infoVersion,
                 documentTemplate);
-            Console.WriteLine(json);
+
+            // Write the output to the file.
+            await File.WriteAllTextAsync(output, json);
         }
     }
 }

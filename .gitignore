@@ -8,3 +8,4 @@
 /.nuke/temp
 /nuget
 /artifacts
+/Tool/swagger.json
