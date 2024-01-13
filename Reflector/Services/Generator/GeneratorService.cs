@@ -68,8 +68,10 @@ namespace Reflector.Services.Generator
                 settings.DocumentTemplate = documentTemplate;
             }
 
+            Console.WriteLine($"Generating for controllers:\n{string.Join("\n", controllers.Select(c => c.Name))}");
             var generator = new WebApiOpenApiDocumentGenerator(settings);
             var document = await generator.GenerateForControllersAsync(controllers);
+
             return document.ToJson();
         }
 
