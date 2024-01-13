@@ -215,6 +215,7 @@ class Build : NukeBuild
 
     Target Docs => _ => _
         .DependsOn(Compile)
+        .OnlyWhenDynamic(() => IsLocalBuild)
         .Executes(() =>
         {
             var output = DotNetRun(s => s
