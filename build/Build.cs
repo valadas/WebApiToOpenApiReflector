@@ -27,6 +27,7 @@ using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.NuGet.NuGetTasks;
 using static Nuke.Common.Tools.Git.GitTasks;
+using System.Text.RegularExpressions;
 
 [GitHubActions(
     "PR Validation",
@@ -93,6 +94,7 @@ class Build : NukeBuild
     Target Compile => _ => _
         .DependsOn(Clean)
         .DependsOn(Restore)
+        .DependsOn(Docs)
         .Produces(artifactsDirectory)
         .Executes(() =>
         {
@@ -134,6 +136,7 @@ class Build : NukeBuild
     Target CreateNugetPackage => _ => _
         .DependsOn(Clean)
         .DependsOn(Restore)
+        .DependsOn(Docs)
         .Executes(() =>
         {
             DotNetPack(s => s
@@ -209,6 +212,29 @@ class Build : NukeBuild
                 .SetTargetPath(package)
                 .SetSource("https://api.nuget.org/v3/index.json")
             );
+        });
+
+    Target Docs => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            var output = DotNetRun(s => s
+                .SetProjectFile(project)
+                .SetConfiguration(Configuration)
+                .SetNoRestore(true)
+                .SetNoBuild(true)
+                .SetProcessExitHandler(_ => Serilog.Log.Information("Run completed"))
+                .SetApplicationArguments("--help")
+            );
+            var readme = (RootDirectory / "README.md").ReadAllText();
+            var pattern = @"(?<=<!--- BEGIN_TOOL_DOCS ---\>)(.*?)(?=<!--- END_TOOL_DOCS --->)";
+            var newText = new StringBuilder()
+                .AppendLine()
+                .AppendLine("```");
+            output.ForEach(line => newText.AppendLine(line.Text));
+            newText.AppendLine("```");
+            var newReadme = Regex.Replace(readme, pattern, newText.ToString(), RegexOptions.Singleline);
+            (RootDirectory / "README.md").WriteAllText(newReadme);
         });
 
     private string GeneratedReleaseNotes()
