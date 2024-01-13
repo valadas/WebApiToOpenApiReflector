@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
 	<PackAsTool>true</PackAsTool>
 	<PackageId>WebApiToOpenApiReflector</PackageId>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<AssemblyName>WebApiToOpenApiReflector</AssemblyName>
 	<Authors>Daniel Valadas</Authors>
 	<Product>WebApiToOpenApiReflector</Product>
@@ -38,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <None Include="../README.md" Pack="true" PackagePath=""></None>
+	  <None Include="../README.md" Pack="true" PackagePath="\"></None>
   </ItemGroup>
 
 </Project>
