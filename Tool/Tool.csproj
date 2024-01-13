@@ -4,13 +4,15 @@
     <OutputType>Exe</OutputType>
 	<PackAsTool>true</PackAsTool>
 	<PackageId>WebApiToOpenApiReflector</PackageId>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<AssemblyName>WebApiToOpenApiReflector</AssemblyName>
 	<Authors>Daniel Valadas</Authors>
 	<Product>WebApiToOpenApiReflector</Product>
 	<Description>Command Line Utility to create Swagger specifications using reflection. This project is not intended to be used for .Net Core projects.</Description>
 	<RepositoryUrl>https://github.com/valadas/WebApiToOpenApiReflector</RepositoryUrl>
 	<ToolCommandName>webapi-to-openapi-reflector</ToolCommandName>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+	<RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -34,6 +36,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reflector\Reflector.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Include="../README.md" Pack="true" PackagePath="\"></None>
   </ItemGroup>
 
 </Project>

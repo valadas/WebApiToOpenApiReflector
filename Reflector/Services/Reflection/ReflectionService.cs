@@ -19,6 +19,7 @@ namespace Reflector.Services.Reflection
             var controllers = assembly
                 .GetTypes()
                 .Where(t => IsController(t));
+            Console.WriteLine($"Found {controllers.Count()} controllers");
             foreach (var controller in controllers)
             {
                 Console.WriteLine(controller.Name);
