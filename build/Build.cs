@@ -94,6 +94,7 @@ class Build : NukeBuild
     Target Compile => _ => _
         .DependsOn(Clean)
         .DependsOn(Restore)
+        .DependsOn(Docs)
         .Produces(artifactsDirectory)
         .Executes(() =>
         {
@@ -135,6 +136,7 @@ class Build : NukeBuild
     Target CreateNugetPackage => _ => _
         .DependsOn(Clean)
         .DependsOn(Restore)
+        .DependsOn(Docs)
         .Executes(() =>
         {
             DotNetPack(s => s
