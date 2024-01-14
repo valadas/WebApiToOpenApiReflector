@@ -15,7 +15,7 @@ dotnet tool install -g WebApiToOpenApiReflector
 ## Usage
 <!--- BEGIN_TOOL_DOCS --->
 ```
-Usage: WebApiToOpenApiReflector [--controller-names <String>...] [--default-url-template <String>] [--add-missing-path-parameters] [--default-response-reference-type-null-handling <ReferenceTypeNullHandling>] [--generate-original-parameter-names=<true|false>] [--title <String>] [--description <String>] [--info-version <String>] [--document-template <String>] [--help] [--version] assembly-paths0 ... assembly-pathsN
+Usage: WebApiToOpenApiReflector [--controller-names <String>...] [--default-url-template <String>] [--add-missing-path-parameters] [--default-response-reference-type-null-handling <ReferenceTypeNullHandling>] [--generate-original-parameter-names=<true|false>] [--title <String>] [--description <String>] [--info-version <String>] [--document-template <String>] [--output <String>] [--help] [--version] assembly-paths0 ... assembly-pathsN
 
 Generates a Swagger/OpenAPI specification for a controller or controllers contained in a .NET Web API assembly.
 
@@ -32,6 +32,7 @@ Options:
   -d, --description <String>                                                         Specifies the description of the Swagger specification, ignored when the document template is provided.
   -v, --info-version <String>                                                        Specifies the version of the Swagger specification (default: 1.0.0). (Default: 1.0.0)
   --document-template <String>                                                       Specifies the Swagger document template (may be a path or JSON, default: none).
+  -o, --output <String>                                                              The path to the file to write the specifications to. (Default: swagger.json)
   -h, --help                                                                         Show help message
   --version                                                                          Show version
 ```
