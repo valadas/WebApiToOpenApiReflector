@@ -1,4 +1,4 @@
-![NuGet Version](https://img.shields.io/nuget/v/WebApiToOpenApiReflector)
+[![NuGet Version](https://img.shields.io/nuget/v/WebApiToOpenApiReflector)](https://www.nuget.org/packages/WebApiToOpenApiReflector)
 
 # WebApiToOpenApiReflector
 A dotnet tool that can use reflection to generate OpenApi from .NetFramework assemblies
