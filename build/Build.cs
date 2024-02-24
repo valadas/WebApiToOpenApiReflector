@@ -150,6 +150,7 @@ class Build : NukeBuild
         .DependsOn(Clean)
         .DependsOn(Restore)
         .DependsOn(Docs)
+        .Produces(nugetDirectory / "*.nupkg")
         .Executes(() =>
         {
             DotNetPack(s => s
@@ -239,6 +240,7 @@ class Build : NukeBuild
                 .SetNoBuild(true)
                 .SetProcessExitHandler(_ => Serilog.Log.Information("Run completed"))
                 .SetApplicationArguments("--help")
+                .SetFramework("net8.0")
             );
             var readme = (RootDirectory / "README.md").ReadAllText();
             var pattern = @"(?<=<!--- BEGIN_TOOL_DOCS ---\>)(.*?)(?=<!--- END_TOOL_DOCS --->)";
