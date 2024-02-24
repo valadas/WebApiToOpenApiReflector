@@ -50,3 +50,8 @@ jobs:
         with:
           name: artifacts
           path: artifacts
+      - name: 'Publish: nuget'
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget
+          path: nuget
