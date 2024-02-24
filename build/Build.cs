@@ -97,16 +97,26 @@ class Build : NukeBuild
         .Produces(artifactsDirectory)
         .Executes(() =>
         {
+            var frameworks = new List<string>
+            {
+                "net6.0",
+                "net7.0",
+                "net8.0",
+            };
             if (IsLocalBuild)
             {
-                DotNetPublish(s => s
-                    .SetProject(project)
-                    .SetConfiguration(Configuration)
-                    .SetNoRestore(true)
-                    .SetAssemblyVersion(GitVersion.MajorMinorPatch)
-                    .SetFileVersion(GitVersion.MajorMinorPatch)
-                    .SetInformationalVersion(GitVersion.FullSemVer)
-                    .SetOutput(artifactsDirectory));
+                frameworks.ForEach(framework =>
+                {
+                    DotNetPublish(s => s
+                        .SetProject(project)
+                        .SetConfiguration(Configuration)
+                        .SetNoRestore(true)
+                        .SetAssemblyVersion(GitVersion.MajorMinorPatch)
+                        .SetFileVersion(GitVersion.MajorMinorPatch)
+                        .SetInformationalVersion(GitVersion.FullSemVer)
+                        .SetOutput(artifactsDirectory)
+                        .SetFramework(framework));
+                });
             }
             else
             {
@@ -119,15 +129,19 @@ class Build : NukeBuild
 
                 runtimeIdentifiers.ForEach(runtimeIdentifier =>
                 {
-                    DotNetPublish(s => s
-                        .SetProject(project)
-                        .SetConfiguration(Configuration)
-                        .SetAssemblyVersion(GitVersion.MajorMinorPatch)
-                        .SetFileVersion(GitVersion.MajorMinorPatch)
-                        .SetInformationalVersion(GitVersion.FullSemVer)
-                        .EnablePublishSingleFile()
-                        .SetRuntime(runtimeIdentifier)
-                        .SetOutput(artifactsDirectory / runtimeIdentifier));
+                    frameworks.ForEach(framework =>
+                    {
+                        DotNetPublish(s => s
+                            .SetProject(project)
+                            .SetConfiguration(Configuration)
+                            .SetAssemblyVersion(GitVersion.MajorMinorPatch)
+                            .SetFileVersion(GitVersion.MajorMinorPatch)
+                            .SetInformationalVersion(GitVersion.FullSemVer)
+                            .EnablePublishSingleFile()
+                            .SetRuntime(runtimeIdentifier)
+                            .SetOutput(artifactsDirectory / runtimeIdentifier)
+                            .SetFramework(framework));
+                    });
                 });
             }
         });
