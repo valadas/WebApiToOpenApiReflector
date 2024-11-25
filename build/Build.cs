@@ -99,9 +99,8 @@ class Build : NukeBuild
         {
             var frameworks = new List<string>
             {
-                "net6.0",
-                "net7.0",
                 "net8.0",
+                "net9.0",
             };
             if (IsLocalBuild)
             {
@@ -238,7 +237,6 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetNoRestore(true)
                 .SetNoBuild(true)
-                .SetProcessExitHandler(_ => Serilog.Log.Information("Run completed"))
                 .SetApplicationArguments("--help")
                 .SetFramework("net8.0")
             );
