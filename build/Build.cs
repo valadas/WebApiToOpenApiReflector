@@ -99,9 +99,9 @@ class Build : NukeBuild
         {
             var frameworks = new List<string>
             {
-                "net6.0",
-                "net7.0",
+                "netstandard2.1",
                 "net8.0",
+                "net9.0",
             };
             if (IsLocalBuild)
             {
@@ -115,7 +115,8 @@ class Build : NukeBuild
                         .SetFileVersion(GitVersion.MajorMinorPatch)
                         .SetInformationalVersion(GitVersion.FullSemVer)
                         .SetOutput(artifactsDirectory)
-                        .SetFramework(framework));
+                        .SetFramework(framework)
+                        .DisablePublishSingleFile());
                 });
             }
             else
@@ -140,7 +141,8 @@ class Build : NukeBuild
                             .EnablePublishSingleFile()
                             .SetRuntime(runtimeIdentifier)
                             .SetOutput(artifactsDirectory / runtimeIdentifier)
-                            .SetFramework(framework));
+                            .SetFramework(framework)
+                            .DisablePublishSingleFile());
                     });
                 });
             }
@@ -238,7 +240,6 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .SetNoRestore(true)
                 .SetNoBuild(true)
-                .SetProcessExitHandler(_ => Serilog.Log.Information("Run completed"))
                 .SetApplicationArguments("--help")
                 .SetFramework("net8.0")
             );

@@ -2,6 +2,9 @@
 
 namespace Tool
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
     using Cocona;
     using Microsoft.Extensions.Logging;
     using NJsonSchema.Generation;

@@ -2,6 +2,7 @@
 
 namespace Tool
 {
+    using System.Threading.Tasks;
     using Cocona;
     using Microsoft.Extensions.DependencyInjection;
     using Reflector.Services.Generator;
