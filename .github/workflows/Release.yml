@@ -30,11 +30,11 @@ jobs:
       group: ${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.run_id }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: 'Cache: .nuke/temp, ~/.nuget/packages'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             .nuke/temp
@@ -46,12 +46,12 @@ jobs:
           GitHubToken: ${{ secrets.GITHUB_TOKEN }}
           NugetApiKey: ${{ secrets.NUGET_API_KEY }}
       - name: 'Publish: artifacts'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: artifacts
       - name: 'Publish: nuget'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nuget
           path: nuget
