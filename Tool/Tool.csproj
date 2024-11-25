@@ -16,6 +16,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
