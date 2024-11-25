@@ -99,7 +99,6 @@ class Build : NukeBuild
         {
             var frameworks = new List<string>
             {
-                "netstandard2.1",
                 "net8.0",
                 "net9.0",
             };
@@ -115,8 +114,7 @@ class Build : NukeBuild
                         .SetFileVersion(GitVersion.MajorMinorPatch)
                         .SetInformationalVersion(GitVersion.FullSemVer)
                         .SetOutput(artifactsDirectory)
-                        .SetFramework(framework)
-                        .DisablePublishSingleFile());
+                        .SetFramework(framework));
                 });
             }
             else
@@ -141,8 +139,7 @@ class Build : NukeBuild
                             .EnablePublishSingleFile()
                             .SetRuntime(runtimeIdentifier)
                             .SetOutput(artifactsDirectory / runtimeIdentifier)
-                            .SetFramework(framework)
-                            .DisablePublishSingleFile());
+                            .SetFramework(framework));
                     });
                 });
             }

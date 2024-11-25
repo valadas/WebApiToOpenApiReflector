@@ -11,7 +11,7 @@
 	<Description>Command Line Utility to create Swagger specifications using reflection. This project is not intended to be used for .Net Core projects.</Description>
 	<RepositoryUrl>https://github.com/valadas/WebApiToOpenApiReflector</RepositoryUrl>
 	<ToolCommandName>webapi-to-openapi-reflector</ToolCommandName>
-    <TargetFrameworks>netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 	<RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
