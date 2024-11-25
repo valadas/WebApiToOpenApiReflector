@@ -115,7 +115,8 @@ class Build : NukeBuild
                         .SetFileVersion(GitVersion.MajorMinorPatch)
                         .SetInformationalVersion(GitVersion.FullSemVer)
                         .SetOutput(artifactsDirectory)
-                        .SetFramework(framework));
+                        .SetFramework(framework)
+                        .DisablePublishSingleFile());
                 });
             }
             else
@@ -140,7 +141,8 @@ class Build : NukeBuild
                             .EnablePublishSingleFile()
                             .SetRuntime(runtimeIdentifier)
                             .SetOutput(artifactsDirectory / runtimeIdentifier)
-                            .SetFramework(framework));
+                            .SetFramework(framework)
+                            .DisablePublishSingleFile());
                     });
                 });
             }
