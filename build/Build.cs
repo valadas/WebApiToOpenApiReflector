@@ -241,12 +241,15 @@ class Build : NukeBuild
         {
             var package = nugetDirectory.GlobFiles("*.nupkg").First();
             Serilog.Log.Information($"Publishing NuGet package: {package}");
-            Serilog.Log.Information($"Using NuGet API Key: {NugetApiKey.Substring(0, Math.Min(8, NugetApiKey.Length))}...");
             
             try
             {
-                // Use dotnet nuget push instead of NuGetPush for better cross-platform compatibility
-                DotNet($"nuget push \"{package}\" --api-key {NugetApiKey} --source https://api.nuget.org/v3/index.json --skip-duplicate");
+                DotNetNuGetPush(s => s
+                    .SetTargetPath(package)
+                    .SetApiKey(NugetApiKey)
+                    .SetSource("https://api.nuget.org/v3/index.json")
+                    .SetSkipDuplicate(true)
+                );
                 Serilog.Log.Information("Successfully published to NuGet!");
             }
             catch (Exception ex)
