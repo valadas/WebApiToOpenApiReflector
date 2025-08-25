@@ -151,14 +151,35 @@ class Build : NukeBuild
         .Produces(nugetDirectory / "*.nupkg")
         .Executes(() =>
         {
-            DotNetPack(s => s
-                .SetProject(project)
-                .SetConfiguration(Configuration)
-                .SetAssemblyVersion(GitVersion.MajorMinorPatch)
-                .SetFileVersion(GitVersion.MajorMinorPatch)
-                .SetInformationalVersion(GitVersion.FullSemVer)
-                .SetVersion(GitVersion.NuGetVersionV2)
-                .SetOutputDirectory(nugetDirectory));
+            Serilog.Log.Information($"Creating NuGet package for version: {GitVersion.NuGetVersionV2}");
+            Serilog.Log.Information($"Output directory: {nugetDirectory}");
+            
+            try
+            {
+                DotNetPack(s => s
+                    .SetProject(project)
+                    .SetConfiguration(Configuration)
+                    .SetAssemblyVersion(GitVersion.MajorMinorPatch)
+                    .SetFileVersion(GitVersion.MajorMinorPatch)
+                    .SetInformationalVersion(GitVersion.FullSemVer)
+                    .SetVersion(GitVersion.NuGetVersionV2)
+                    .SetOutputDirectory(nugetDirectory));
+                    
+                var createdPackages = nugetDirectory.GlobFiles("*.nupkg");
+                Serilog.Log.Information($"Successfully created {createdPackages.Count} package(s):");
+                foreach (var package in createdPackages)
+                {
+                    Serilog.Log.Information($"  - {package}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Failed to create NuGet package");
+                Serilog.Log.Error($"Project: {project}");
+                Serilog.Log.Error($"Configuration: {Configuration}");
+                Serilog.Log.Error($"Version: {GitVersion.NuGetVersionV2}");
+                throw;
+            }
         });
 
     Target TagRelease => _ => _
@@ -219,11 +240,22 @@ class Build : NukeBuild
         .Executes(() =>
         {
             var package = nugetDirectory.GlobFiles("*.nupkg").First();
-            NuGetPush(s => s
-                .SetApiKey(NugetApiKey)
-                .SetTargetPath(package)
-                .SetSource("https://api.nuget.org/v3/index.json")
-            );
+            Serilog.Log.Information($"Publishing NuGet package: {package}");
+            Serilog.Log.Information($"Using NuGet API Key: {NugetApiKey.Substring(0, Math.Min(8, NugetApiKey.Length))}...");
+            
+            try
+            {
+                // Use dotnet nuget push instead of NuGetPush for better cross-platform compatibility
+                DotNet($"nuget push \"{package}\" --api-key {NugetApiKey} --source https://api.nuget.org/v3/index.json --skip-duplicate");
+                Serilog.Log.Information("Successfully published to NuGet!");
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Failed to publish to NuGet");
+                Serilog.Log.Error($"Package path: {package}");
+                Serilog.Log.Error($"NuGet source: https://api.nuget.org/v3/index.json");
+                throw;
+            }
         });
 
     Target Docs => _ => _
@@ -231,23 +263,47 @@ class Build : NukeBuild
         .OnlyWhenDynamic(() => IsLocalBuild)
         .Executes(() =>
         {
-            var output = DotNetRun(s => s
-                .SetProjectFile(project)
-                .SetConfiguration(Configuration)
-                .SetNoRestore(true)
-                .SetNoBuild(true)
-                .SetApplicationArguments("--help")
-                .SetFramework("net8.0")
-            );
-            var readme = (RootDirectory / "README.md").ReadAllText();
-            var pattern = @"(?<=<!--- BEGIN_TOOL_DOCS ---\>)(.*?)(?=<!--- END_TOOL_DOCS --->)";
-            var newText = new StringBuilder()
-                .AppendLine()
-                .AppendLine("```");
-            output.ForEach(line => newText.AppendLine(line.Text));
-            newText.AppendLine("```");
-            var newReadme = Regex.Replace(readme, pattern, newText.ToString(), RegexOptions.Singleline);
-            (RootDirectory / "README.md").WriteAllText(newReadme);
+            Serilog.Log.Information("Generating documentation from --help output");
+            
+            try
+            {
+                var output = DotNetRun(s => s
+                    .SetProjectFile(project)
+                    .SetConfiguration(Configuration)
+                    .SetNoRestore(true)
+                    .SetNoBuild(true)
+                    .SetApplicationArguments("--help")
+                    .SetFramework("net8.0")
+                    .SetProcessExitHandler(process => 
+                    {
+                        // Help commands often exit with non-zero codes, which is normal
+                        if (process.ExitCode == 129 || process.ExitCode == 1)
+                        {
+                            return; // Don't throw for help command exit codes
+                        }
+                        process.AssertZeroExitCode();
+                    })
+                );
+                
+                var readme = (RootDirectory / "README.md").ReadAllText();
+                var pattern = @"(?<=<!--- BEGIN_TOOL_DOCS ---\>)(.*?)(?=<!--- END_TOOL_DOCS --->)";
+                var newText = new StringBuilder()
+                    .AppendLine()
+                    .AppendLine("```");
+                output.ForEach(line => newText.AppendLine(line.Text));
+                newText.AppendLine("```");
+                var newReadme = Regex.Replace(readme, pattern, newText.ToString(), RegexOptions.Singleline);
+                (RootDirectory / "README.md").WriteAllText(newReadme);
+                
+                Serilog.Log.Information("Successfully updated README.md with tool documentation");
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Failed to generate documentation");
+                Serilog.Log.Error($"Project: {project}");
+                Serilog.Log.Error($"Framework: net8.0");
+                throw;
+            }
         });
 
     private string GeneratedReleaseNotes()
