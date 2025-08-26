@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 
 [GitHubActions(
     "PR Validation",
-    GitHubActionsImage.UbuntuLatest,
+    GitHubActionsImage.Ubuntu2204,
     OnPullRequestBranches = new[] {"*"},
     OnPushBranches = new[] {"main", "develop"},
     InvokedTargets = new[] {nameof(Compile)},
@@ -40,7 +40,7 @@ using System.Text.RegularExpressions;
 )]
 [GitHubActions(
     "Release",
-    GitHubActionsImage.UbuntuLatest,
+    GitHubActionsImage.Ubuntu2204,
     OnPushBranches = new[] {"main", "release/*"},
     InvokedTargets = new[] {nameof(ReleaseToGithub), nameof(ReleaseToNuget) },
     ImportSecrets = new[] {nameof(GitHubToken), nameof(NugetApiKey)},
